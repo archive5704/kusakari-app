@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>2026年 草刈り日和カレンダー</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#f8fafc" />
+    <meta name="apple-mobile-web-app-title" content="草刈り日和" />
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+    <link rel="manifest" href="site.webmanifest" />
+  <style>
+    :root{
+      --bg:#f8fafc;--card:#ffffff;--text:#0f172a;--muted:#64748b;--border:#e2e8f0;
+      --shadow:0 10px 25px rgba(15,23,42,.08);
+      --emerald-bg:#ecfdf5; --emerald-border:#a7f3d0; --emerald-text:#065f46;
+      --sky-bg:#eff6ff; --sky-border:#bae6fd; --sky-text:#075985;
+      --amber-bg:#fffbeb; --amber-border:#fde68a; --amber-text:#92400e;
+      --rose-bg:#fff1f2; --rose-border:#fecdd3; --rose-text:#9f1239;
+      --violet-bg:#f5f3ff; --violet-text:#5b21b6;
+      --slate-chip:#e2e8f0; --slate-chip-text:#1e293b;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1024px;margin:0 auto;padding:16px}
+    .card{background:var(--card);border-radius:24px;box-shadow:var(--shadow);overflow:hidden}
+    .header{padding:24px 16px 8px}
+    .badge-top{display:inline-flex;align-items:center;gap:8px;background:#f1f5f9;color:#334155;padding:6px 12px;border-radius:999px;font-size:14px}
+    .row{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:12px;flex-wrap:wrap}
+    .title{font-size:20px;font-weight:700;letter-spacing:-.02em;margin:0}
+    .select{appearance:none;border:1px solid var(--border);background:#fff;border-radius:16px;padding:10px 14px;font-size:14px;color:#334155;min-width:120px}
+    .content{padding:16px}
+    .weekdays,.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+    .weekdays{text-align:center;font-size:14px;font-weight:600;color:var(--muted);margin-bottom:8px}
+    .weekday{padding:4px 0}
+    .day{min-height:112px;border:1px solid var(--border);border-radius:18px;padding:8px;background:#fff}
+    .empty{border-color:transparent;background:transparent}
+    .day-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+    .date-num{font-size:16px;font-weight:700}
+    .mark{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:22px;border-radius:999px;padding:0 8px;font-size:12px;font-weight:700}
+    .details{margin-top:8px;display:flex;flex-direction:column;gap:4px;font-size:11px;line-height:1.35;color:#475569}
+    .chip{display:inline-flex;align-items:center;gap:6px;width:max-content;border-radius:999px;padding:2px 8px;font-size:11px}
+    .legend{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+    .legend-title{font-size:14px;font-weight:700;color:#334155;margin-bottom:10px}
+    .legend-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .legend-item{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:18px;background:#fff}
+    .legend-mark{width:36px;height:36px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-weight:700;border:1px solid currentColor;flex:0 0 auto}
+    .legend-text{font-size:14px;color:#334155}
+    .tone-emerald{background:var(--emerald-bg);border-color:var(--emerald-border);color:var(--emerald-text)}
+    .tone-sky{background:var(--sky-bg);border-color:var(--sky-border);color:var(--sky-text)}
+    .tone-amber{background:var(--amber-bg);border-color:var(--amber-border);color:var(--amber-text)}
+    .tone-rose{background:var(--rose-bg);border-color:var(--rose-border);color:var(--rose-text)}
+    .tone-violet{background:var(--violet-bg);color:var(--violet-text)}
+    .tone-slate{background:var(--slate-chip);color:var(--slate-chip-text)}
+    .cell-emerald{background:var(--emerald-bg);border-color:var(--emerald-border)}
+    .cell-sky{background:var(--sky-bg);border-color:var(--sky-border)}
+    .cell-amber{background:var(--amber-bg);border-color:var(--amber-border)}
+    .cell-rose{background:var(--rose-bg);border-color:var(--rose-border)}
+    @media (max-width: 700px){
+      .wrap{padding:12px}.header{padding:20px 12px 8px}.content{padding:12px}.title{font-size:18px}
+      .row{align-items:flex-start}.grid{gap:6px}.weekdays{gap:6px;font-size:12px}.day{min-height:96px;padding:6px;border-radius:14px}
+      .date-num{font-size:14px}.details{font-size:10px}.legend-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="header">
+        <div class="badge-top">📅 2026年 草刈り日和カレンダー</div>
+        <div class="row">
+          <h1 class="title" id="monthTitle">4月の草刈り日和</h1>
+          <select id="monthSelect" class="select" aria-label="月を選択"></select>
+        </div>
+      </div>
+      <div class="content">
+        <div class="weekdays" id="weekdays"></div>
+        <div class="grid" id="calendarGrid"></div>
+        <div class="legend">
+          <div class="legend-title">記号の見方</div>
+          <div class="legend-grid" id="legend"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+const YEAR = 2026;
+const MONTH_NAMES = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
+const WEEKDAYS = ["日","月","火","水","木","金","土"];
+const MOON_DATA = {
+  1: { full: [3], newMoon: [19], lastQuarter: [11], firstQuarter: [26] },
+  2: { full: [2], newMoon: [17], lastQuarter: [9], firstQuarter: [24] },
+  3: { full: [3], newMoon: [19], lastQuarter: [11], firstQuarter: [26] },
+  4: { full: [2], newMoon: [17], lastQuarter: [10], firstQuarter: [24] },
+  5: { full: [2, 31], newMoon: [17], lastQuarter: [10], firstQuarter: [23] },
+  6: { full: [30], newMoon: [15], lastQuarter: [8], firstQuarter: [22] },
+  7: { full: [29], newMoon: [14], lastQuarter: [8], firstQuarter: [21] },
+  8: { full: [28], newMoon: [13], lastQuarter: [6], firstQuarter: [20] },
+  9: { full: [27], newMoon: [11], lastQuarter: [4], firstQuarter: [19] },
+  10: { full: [26], newMoon: [11], lastQuarter: [3], firstQuarter: [19] },
+  11: { full: [24], newMoon: [9], lastQuarter: [2], firstQuarter: [17] },
+  12: { full: [24], newMoon: [9], lastQuarter: [1, 31], firstQuarter: [17] },
+};
+const SOIL_DATA = {
+  1: { big: [1, 2, 3], small: [9, 10, 11, 12, 13, 14, 15], doyo: [] },
+  2: { big: [], small: [], doyo: [] },
+  3: { big: [2, 3, 4, 5], small: [8, 9, 10, 11, 12, 13], doyo: [] },
+  4: { big: [], small: [], doyo: [16, 17, 18, 19, 20, 21] },
+  5: { big: [], small: [8, 9, 10, 11, 12], doyo: [] },
+  6: { big: [], small: [], doyo: [] },
+  7: { big: [2, 3, 4, 5, 6, 7], small: [8, 9, 10, 11, 12, 13], doyo: [] },
+  8: { big: [23, 24, 25, 26, 27, 28], small: [], doyo: [] },
+  9: { big: [], small: [1, 2, 3, 4, 5, 6, 7], doyo: [] },
+  10: { big: [16, 17, 18, 19, 20, 21], small: [], doyo: [] },
+  11: { big: [], small: [23, 24, 25, 26, 27, 28], doyo: [] },
+  12: { big: [22, 23, 24, 25, 26, 27, 28], small: [], doyo: [] },
+};
+const KANSHI_CYCLE = [
+  "甲子","乙丑","丙寅","丁卯","戊辰","己巳","庚午","辛未","壬申","癸酉",
+  "甲戌","乙亥","丙子","丁丑","戊寅","己卯","庚辰","辛巳","壬午","癸未",
+  "甲申","乙酉","丙戌","丁亥","戊子","己丑","庚寅","辛卯","壬辰","癸巳",
+  "甲午","乙未","丙申","丁酉","戊戌","己亥","庚子","辛丑","壬寅","癸卯",
+  "甲辰","乙巳","丙午","丁未","戊申","己酉","庚戌","辛亥","壬子","癸丑",
+  "甲寅","乙卯","丙辰","丁巳","戊午","己未","庚申","辛酉","壬戌","癸亥",
+];
+const JAN_1_KANSHI = "乙亥";
+const BAD_KANSHI = new Set(["乙亥","丙子","丁丑","戊寅","己卯","庚辰","辛巳","壬午","癸未","甲申"]);
+const LEGEND = [
+  { key: "double", label: "◎", description: "下弦の月から上弦の月まで かつ 大つち・小つち・土用", tone: "tone-emerald" },
+  { key: "good", label: "○", description: "下弦の月から上弦の月まで", tone: "tone-sky" },
+  { key: "near", label: "△", description: "下弦の月から上弦の月までの前後3日", tone: "tone-amber" },
+  { key: "bad", label: "×", description: "1月のみ 乙亥から甲申まで", tone: "tone-rose" },
+];
+function pad(n){ return String(n).padStart(2, "0"); }
+function toKey(y,m,d){ return `${y}-${pad(m)}-${pad(d)}`; }
+function parseKey(key){ const [y,m,d] = key.split("-").map(Number); return new Date(y, m-1, d); }
+function addDays(key, days){ const dt = parseKey(key); dt.setDate(dt.getDate()+days); return toKey(dt.getFullYear(), dt.getMonth()+1, dt.getDate()); }
+function buildMoonIntervals(){
+  const quarterEvents = [];
+  Object.entries(MOON_DATA).forEach(([month, data]) => {
+    data.lastQuarter.forEach(day => quarterEvents.push({ type: "last", key: toKey(YEAR, Number(month), day) }));
+    data.firstQuarter.forEach(day => quarterEvents.push({ type: "first", key: toKey(YEAR, Number(month), day) }));
+  });
+  quarterEvents.sort((a,b) => parseKey(a.key) - parseKey(b.key));
+  const intervals = [];
+  for(let i=0;i<quarterEvents.length;i++){
+    if(quarterEvents[i].type !== "last") continue;
+    const nextFirst = quarterEvents.slice(i+1).find(item => item.type === "first");
+    if(nextFirst) intervals.push({ start: quarterEvents[i].key, end: nextFirst.key });
+  }
+  return intervals;
+}
+function eachDateBetween(startKey, endKey){
+  const dates = [];
+  let cursor = parseKey(startKey);
+  const end = parseKey(endKey);
+  while(cursor <= end){
+    dates.push(toKey(cursor.getFullYear(), cursor.getMonth()+1, cursor.getDate()));
+    cursor.setDate(cursor.getDate()+1);
+  }
+  return dates;
+}
+function buildCalendarData(){
+  const jan1Index = KANSHI_CYCLE.indexOf(JAN_1_KANSHI);
+  const intervals = buildMoonIntervals();
+  const moonGood = new Set();
+  const moonNear = new Set();
+  intervals.forEach(({start, end}) => {
+    eachDateBetween(start, end).forEach(key => moonGood.add(key));
+    eachDateBetween(addDays(start, -3), addDays(start, -1)).forEach(key => moonNear.add(key));
+    eachDateBetween(addDays(end, 1), addDays(end, 3)).forEach(key => moonNear.add(key));
+  });
+  const soilDays = new Set();
+  Object.entries(SOIL_DATA).forEach(([month, groups]) => {
+    ["big","small","doyo"].forEach(kind => groups[kind].forEach(day => soilDays.add(toKey(YEAR, Number(month), day))));
+  });
+  const fullMoonDays = new Set();
+  const newMoonDays = new Set();
+  Object.entries(MOON_DATA).forEach(([month, data]) => {
+    data.full.forEach(day => fullMoonDays.add(toKey(YEAR, Number(month), day)));
+    data.newMoon.forEach(day => newMoonDays.add(toKey(YEAR, Number(month), day)));
+  });
+  const items = [];
+  const start = new Date(YEAR, 0, 1);
+  const end = new Date(YEAR, 11, 31);
+  for(let cursor = new Date(start); cursor <= end; cursor.setDate(cursor.getDate()+1)){
+    const key = toKey(cursor.getFullYear(), cursor.getMonth()+1, cursor.getDate());
+    const diffDays = Math.floor((cursor - start) / 86400000);
+    const kanshi = KANSHI_CYCLE[(jan1Index + diffDays) % 60];
+    const isBadKanshi = cursor.getMonth() === 0 && BAD_KANSHI.has(kanshi);
+    const isMoonGood = moonGood.has(key);
+    const isMoonNear = !isMoonGood && moonNear.has(key);
+    const isSoil = soilDays.has(key);
+    const isFullMoon = fullMoonDays.has(key);
+    const isNewMoon = newMoonDays.has(key);
+    let mark = "";
+    if (isBadKanshi) mark = "×";
+    else if (isMoonGood && isSoil) mark = "◎";
+    else if (isMoonGood) mark = "○";
+    else if (isMoonNear) mark = "△";
+    items.push({ key, year: cursor.getFullYear(), month: cursor.getMonth()+1, day: cursor.getDate(), weekday: cursor.getDay(), kanshi, isBadKanshi, isMoonGood, isMoonNear, isSoil, isFullMoon, isNewMoon, mark });
+  }
+  return items;
+}
+function getCellClass(item){
+  if (item.isBadKanshi) return "cell-rose";
+  if (item.isMoonGood && item.isSoil) return "cell-emerald";
+  if (item.isMoonGood) return "cell-sky";
+  if (item.isMoonNear) return "cell-amber";
+  return "";
+}
+function getMarkTone(item){
+  if (item.isBadKanshi) return "tone-rose";
+  if (item.isMoonGood && item.isSoil) return "tone-emerald";
+  if (item.isMoonGood) return "tone-sky";
+  if (item.isMoonNear) return "tone-amber";
+  return "tone-slate";
+}
+function buildMonthGrid(year, month, items){
+  const firstDay = new Date(year, month - 1, 1);
+  const lastDate = new Date(year, month, 0).getDate();
+  const leading = firstDay.getDay();
+  const monthItems = items.filter(item => item.month === month);
+  const cells = [];
+  for(let i=0;i<leading;i++) cells.push(null);
+  for(let day=1;day<=lastDate;day++) cells.push(monthItems.find(item => item.day === day) || null);
+  while(cells.length % 7 !== 0) cells.push(null);
+  return cells;
+}
+const allItems = buildCalendarData();
+const weekdaysEl = document.getElementById("weekdays");
+const calendarGrid = document.getElementById("calendarGrid");
+const monthSelect = document.getElementById("monthSelect");
+const monthTitle = document.getElementById("monthTitle");
+const legendEl = document.getElementById("legend");
+WEEKDAYS.forEach(day => { const div = document.createElement("div"); div.className = "weekday"; div.textContent = day; weekdaysEl.appendChild(div); });
+MONTH_NAMES.forEach((name, idx) => { const option = document.createElement("option"); option.value = String(idx + 1); option.textContent = name; monthSelect.appendChild(option); });
+LEGEND.forEach(item => {
+  const wrap = document.createElement("div"); wrap.className = "legend-item";
+  const mark = document.createElement("div"); mark.className = `legend-mark ${item.tone}`; mark.textContent = item.label;
+  const text = document.createElement("div"); text.className = "legend-text"; text.textContent = item.description;
+  wrap.appendChild(mark); wrap.appendChild(text); legendEl.appendChild(wrap);
+});
+function render(month){
+  monthTitle.textContent = `${MONTH_NAMES[month - 1]}の草刈り日和`;
+  calendarGrid.innerHTML = "";
+  const cells = buildMonthGrid(YEAR, month, allItems);
+  cells.forEach((item) => {
+    const cell = document.createElement("div");
+    cell.className = `day ${item ? getCellClass(item) : "empty"}`;
+    if (!item) { calendarGrid.appendChild(cell); return; }
+    const top = document.createElement("div"); top.className = "day-top";
+    const dateNum = document.createElement("div"); dateNum.className = "date-num"; dateNum.textContent = item.day;
+    top.appendChild(dateNum);
+    if (item.mark) { const mark = document.createElement("div"); mark.className = `mark ${getMarkTone(item)}`; mark.textContent = item.mark; top.appendChild(mark); }
+    const details = document.createElement("div"); details.className = "details";
+    const kanshi = document.createElement("div"); kanshi.textContent = `干支：${item.kanshi}`; details.appendChild(kanshi);
+    if (item.isFullMoon) { const chip = document.createElement("div"); chip.className = "chip tone-violet"; chip.textContent = "🌕 満月"; details.appendChild(chip); }
+    if (item.isNewMoon) { const chip = document.createElement("div"); chip.className = "chip tone-slate"; chip.textContent = "🌑 新月"; details.appendChild(chip); }
+    if (item.isBadKanshi) { const chip = document.createElement("div"); chip.className = "chip tone-rose"; chip.textContent = "⛔ 干支NG"; details.appendChild(chip); }
+    cell.appendChild(top); cell.appendChild(details); calendarGrid.appendChild(cell);
+  });
+}
+const today = new Date();
+const defaultMonth = today.getFullYear() === YEAR ? String(today.getMonth() + 1) : "4";
+monthSelect.value = defaultMonth;
+render(Number(defaultMonth));
+monthSelect.addEventListener("change", (e) => render(Number(e.target.value)));
+</script>
+</body>
+</html>
