@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>草刈り日和カレンダー</title>
+  <meta name="theme-color" content="#f8fafc" />
+  <meta name="apple-mobile-web-app-title" content="草刈り日和" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <link rel="manifest" href="site.webmanifest" />
+  <style>
+    :root{--bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;--shadow:0 12px 30px rgba(15,23,42,.08);--emerald-bg:#ecfdf5;--emerald-bd:#a7f3d0;--emerald-tx:#065f46;--yellow-bg:#fefce8;--yellow-bd:#fde68a;--yellow-tx:#854d0e;--slate-bg:#f1f5f9;--slate-bd:#cbd5e1;--slate-tx:#475569;--rose-bg:#fff1f2;--rose-bd:#fecdd3;--rose-tx:#9f1239;--violet-tx:#7c3aed;--today-glow:rgba(59,130,246,.7)}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Sans","Yu Gothic",sans-serif}
+    .page{min-height:100vh;padding:16px}.wrap{max-width:1024px;margin:0 auto}.card{background:var(--card);border-radius:24px;box-shadow:var(--shadow);overflow:hidden}
+    .header{padding:24px 16px 8px}.top-badge{display:inline-flex;align-items:center;gap:8px;border-radius:999px;background:#f1f5f9;color:#334155;padding:6px 12px;font-size:14px}
+    .controls{display:flex;justify-content:flex-start;align-items:center;margin-top:12px;gap:12px;flex-wrap:wrap}.month-nav{display:flex;align-items:center;gap:8px;background:#f1f5f9;padding:4px;border-radius:16px}
+    select,button.nav-btn{appearance:none;border:1px solid var(--line);border-radius:12px;background:#fff;color:#334155;padding:10px 14px;font-size:14px}
+    .year-select{min-width:120px}.month-select{min-width:120px;border:none;box-shadow:none}.nav-btn{min-width:44px;cursor:pointer;line-height:1;font-weight:700}
+    .content{padding:16px 16px 20px}.status{margin-bottom:8px;font-size:13px;color:#64748b}.weekdays,.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+    .weekdays{margin-bottom:8px;text-align:center;color:var(--muted);font-size:14px;font-weight:600}.weekday{padding:4px 0}.grid.touch-pan-y{touch-action:pan-y}
+    .cell{min-height:112px;min-width:0;border:1px solid var(--line);border-radius:16px;background:#fff;padding:8px;transition:box-shadow .25s ease,border-color .2s ease,background-color .2s ease;overflow:hidden}
+    .cell.empty{border-color:transparent;background:transparent}.tone-bad{background:var(--rose-bg);border-color:var(--rose-bd)}.tone-double{background:var(--emerald-bg);border-color:var(--emerald-bd)}.tone-good{background:var(--yellow-bg);border-color:var(--yellow-bd)}.tone-near{background:var(--slate-bg);border-color:var(--slate-bd)}
+    .today{animation:todayGlow 2.8s ease-in-out infinite}@keyframes todayGlow{0%,100%{box-shadow:0 0 0 rgba(59,130,246,0)}50%{box-shadow:0 0 14px var(--today-glow)}}
+    .cell-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.date{font-size:16px;font-weight:600;color:#0f172a;white-space:nowrap}
+    .mark{font-size:14px;font-weight:700;line-height:1;white-space:nowrap;flex:0 0 auto}.mark.bad{color:var(--rose-tx)}.mark.double{color:var(--emerald-tx)}.mark.good{color:var(--yellow-tx)}.mark.near{color:var(--slate-tx)}
+    .details{margin-top:8px;display:flex;flex-direction:column;gap:4px;color:#475569;font-size:11px;line-height:1.35;min-width:0}.kanshi,.soil,.moon{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.soil{color:#b45309}.moon{color:var(--violet-tx)}
+    .badges{display:flex;align-items:center;gap:4px}.detail-icons{display:none;align-items:center;gap:4px;color:#475569}.legend-wrap{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .legend-item{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:18px;background:#fff;padding:12px;min-width:0}.legend-mark{display:flex;align-items:center;justify-content:center;width:36px;height:36px;flex:0 0 auto;aspect-ratio:1/1;align-self:center;border-radius:999px;border:1px solid currentColor;font-size:16px;font-weight:700;line-height:1}
+    .legend-mark.double{background:var(--emerald-bg);color:var(--emerald-tx);border-color:var(--emerald-bd)}.legend-mark.good{background:var(--yellow-bg);color:var(--yellow-tx);border-color:var(--yellow-bd)}.legend-mark.near{background:var(--slate-bg);color:var(--slate-tx);border-color:var(--slate-bd)}.legend-mark.bad{background:var(--rose-bg);color:var(--rose-tx);border-color:var(--rose-bd)}.legend-text{font-size:14px;color:#334155;min-width:0;line-height:1.45}
+    @media (max-width:860px){.legend{grid-template-columns:1fr}}
+    @media (max-width:700px){.page{padding:12px}.header{padding:20px 12px 8px}.content{padding:12px}.weekdays,.grid{gap:4px}.weekdays{font-size:11px}.cell{min-height:92px;padding:6px;border-radius:14px}.date{font-size:13px}.mark{font-size:14px}.details,.moon,.soil{font-size:9px;line-height:1.25}.detail-icons{display:flex}.detail-icons span{font-size:10px !important}.badges .top-only-icon{display:none}.legend{grid-template-columns:1fr}.legend-item{padding:10px 12px;border-radius:16px}.legend-mark{width:34px;height:34px;font-size:15px}.legend-text{font-size:13px;line-height:1.4}.year-select,.month-select{min-width:112px}.nav-btn{min-width:40px;padding:9px 10px}}
+  </style>
+</head>
+<body>
+<div class="page"><div class="wrap"><div class="card">
+  <div class="header">
+    <div class="top-badge">📅 草刈り日和カレンダー</div>
+    <div class="controls">
+      <select id="yearSelect" class="year-select" aria-label="年を選択"></select>
+      <div class="month-nav">
+        <button id="prevBtn" class="nav-btn" aria-label="前月">←</button>
+        <select id="monthSelect" class="month-select" aria-label="月を選択"></select>
+        <button id="nextBtn" class="nav-btn" aria-label="翌月">→</button>
+      </div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="status" id="statusText">読み込み中…</div>
+    <div class="weekdays" id="weekdays"></div>
+    <div class="grid touch-pan-y" id="calendarGrid"></div>
+    <div class="legend-wrap"><div class="legend" id="legend"></div></div>
+  </div>
+</div></div></div>
+
+<script type="module">
+import * as Astronomy from "https://esm.sh/astronomy-engine@2.1.19";
+const MONTH_NAMES=["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
+const WEEKDAYS=["日","月","火","水","木","金","土"];
+const KANSHI_CYCLE=["甲子","乙丑","丙寅","丁卯","戊辰","己巳","庚午","辛未","壬申","癸酉","甲戌","乙亥","丙子","丁丑","戊寅","己卯","庚辰","辛巳","壬午","癸未","甲申","乙酉","丙戌","丁亥","戊子","己丑","庚寅","辛卯","壬辰","癸巳","甲午","乙未","丙申","丁酉","戊戌","己亥","庚子","辛丑","壬寅","癸卯","甲辰","乙巳","丙午","丁未","戊申","己酉","庚戌","辛亥","壬子","癸丑","甲寅","乙卯","丙辰","丁巳","戊午","己未","庚申","辛酉","壬戌","癸亥"];
+const BASE_KANSHI_DATE=new Date(Date.UTC(2026,0,1)); const BASE_KANSHI="乙亥";
+const BAD_KANSHI_JAN_ONLY=new Set(["乙亥","丙子","丁丑","戊寅","己卯","庚辰","辛巳","壬午","癸未","甲申"]);
+const BAD_KANSHI_FORCE=new Set(["辛亥","壬子","癸丑","甲寅","乙卯","丙辰","丁巳","戊午","己未","庚申"]);
+const BAMBOO_KANSHI=new Set(["辛亥","壬子","癸丑","甲寅","乙卯","丙辰","丁巳","戊午","己未","庚申"]);
+const SOIL_SEASON_KANICHI={spring:new Set(["巳","午","酉"]),summer:new Set(["卯","辰","申"]),autumn:new Set(["未","酉","亥"]),winter:new Set(["寅","卯","巳"])};
+const YEAR_OPTIONS=Array.from({length:16},(_,i)=>String(2024+i));
+const SOLAR_TERM_COEFFICIENTS={risshun:3.87,rikka:5.52,risshuu:7.5,rittou:7.438};
+const LEGEND=[
+ {key:"double",label:"◎",description:"下弦の月から上弦の月まで かつ 大つち・小つち・土用"},
+ {key:"good",label:"○",description:"下弦の月から上弦の月まで"},
+ {key:"near",label:"△",description:"下弦の月から上弦の月までの前後3日"},
+ {key:"bad",label:"×",description:"1月のみ 乙亥から甲申まで ＋ 辛亥から庚申は通年"},
+];
+const yearSelect=document.getElementById("yearSelect"),monthSelect=document.getElementById("monthSelect"),prevBtn=document.getElementById("prevBtn"),nextBtn=document.getElementById("nextBtn"),weekdaysEl=document.getElementById("weekdays"),calendarGrid=document.getElementById("calendarGrid"),legendEl=document.getElementById("legend"),statusText=document.getElementById("statusText");
+const state={year:new Date().getFullYear(),month:new Date().getMonth()+1,cache:new Map(),touchStartX:null};
+
+function utcDate(year,month,day){return new Date(Date.UTC(year,month-1,day))}
+function startOfUtcDay(date){return new Date(Date.UTC(date.getUTCFullYear(),date.getUTCMonth(),date.getUTCDate()))}
+function startOfJstDay(date){const jst=new Date(date.getTime()+9*60*60*1000);return new Date(Date.UTC(jst.getUTCFullYear(),jst.getUTCMonth(),jst.getUTCDate()))}
+function pad(n){return String(n).padStart(2,"0")}
+function toKey(y,m,d){return `${y}-${pad(m)}-${pad(d)}`}
+function keyFromDate(date){return toKey(date.getUTCFullYear(),date.getUTCMonth()+1,date.getUTCDate())}
+function addDays(date,days){const next=new Date(date.getTime());next.setUTCDate(next.getUTCDate()+days);return next}
+function diffDays(a,b){return Math.floor((startOfUtcDay(a).getTime()-startOfUtcDay(b).getTime())/86400000)}
+function getKanshi(date){const baseIndex=KANSHI_CYCLE.indexOf(BASE_KANSHI);const offset=diffDays(date,BASE_KANSHI_DATE);const index=((baseIndex+offset)%60+60)%60;return KANSHI_CYCLE[index]}
+function getEarthlyBranch(k){return k.slice(1)}
+function normalizeAstronomyDate(value,fallback){const raw=value&&Object.prototype.hasOwnProperty.call(value,"date")?(typeof value.date==="function"?value.date():value.date):value;const candidate=raw instanceof Date?raw:new Date(raw);if(!Number.isNaN(candidate.getTime()))return startOfJstDay(candidate);return startOfJstDay(fallback??new Date())}
+function collectMoonPhases(year,angle,type){const results=[];const end=new Date(Date.UTC(year+1,0,31));let cursor=new Date(Date.UTC(year-1,11,1));while(cursor<=end){const found=Astronomy.SearchMoonPhase(angle,cursor,40);const eventDate=normalizeAstronomyDate(found,cursor);if(eventDate>end)break;results.push({type,key:keyFromDate(eventDate),date:eventDate});cursor=addDays(eventDate,1)}return results}
+function buildMoonData(year){const phases=[...collectMoonPhases(year,0,"new"),...collectMoonPhases(year,90,"first"),...collectMoonPhases(year,180,"full"),...collectMoonPhases(year,270,"last")].sort((a,b)=>a.date-b.date);
+ const newMoonKeys=new Set(phases.filter(p=>p.type==="new").map(p=>p.key)),fullMoonKeys=new Set(phases.filter(p=>p.type==="full").map(p=>p.key)),firstQuarterKeys=new Set(phases.filter(p=>p.type==="first").map(p=>p.key)),lastQuarterKeys=new Set(phases.filter(p=>p.type==="last").map(p=>p.key)),newMoonDates=phases.filter(p=>p.type==="new").map(p=>p.date);
+ const moonGood=new Set(),moonNear=new Set(),lastQuarters=phases.filter(p=>p.type==="last"),firstQuarters=phases.filter(p=>p.type==="first");
+ lastQuarters.forEach(last=>{const nextFirst=firstQuarters.find(first=>first.date>last.date);if(!nextFirst)return;let cursor=new Date(last.date.getTime());while(cursor<=nextFirst.date){moonGood.add(keyFromDate(cursor));cursor=addDays(cursor,1)}for(let i=1;i<=3;i++){moonNear.add(keyFromDate(addDays(last.date,-i)));moonNear.add(keyFromDate(addDays(nextFirst.date,i)))}}); return {newMoonKeys,fullMoonKeys,firstQuarterKeys,lastQuarterKeys,newMoonDates,moonGood,moonNear}}
+function calcSolarTermDay(year,coefficient){const y=year-1980;return Math.floor(coefficient+0.242194*y-Math.floor(y/4))}
+function getSoilTermDates(year){const terms={winter:utcDate(year,2,calcSolarTermDay(year,SOLAR_TERM_COEFFICIENTS.risshun)),spring:utcDate(year,5,calcSolarTermDay(year,SOLAR_TERM_COEFFICIENTS.rikka)),summer:utcDate(year,8,calcSolarTermDay(year,SOLAR_TERM_COEFFICIENTS.risshuu)),autumn:utcDate(year,11,calcSolarTermDay(year,SOLAR_TERM_COEFFICIENTS.rittou))};
+ console.log("[土用検証ログ]",year,{立春:keyFromDate(terms.winter),立夏:keyFromDate(terms.spring),立秋:keyFromDate(terms.summer),立冬:keyFromDate(terms.autumn),冬土用開始:keyFromDate(addDays(terms.winter,-18)),冬土用終了:keyFromDate(addDays(terms.winter,-1)),春土用開始:keyFromDate(addDays(terms.spring,-18)),春土用終了:keyFromDate(addDays(terms.spring,-1)),夏土用開始:keyFromDate(addDays(terms.summer,-18)),夏土用終了:keyFromDate(addDays(terms.summer,-1)),秋土用開始:keyFromDate(addDays(terms.autumn,-18)),秋土用終了:keyFromDate(addDays(terms.autumn,-1))}); return terms}
+function buildSoilData(year){const soilMap=new Map(),soilEligible=new Set(),kanichiKeys=new Set();
+ const addSoilLabel=(date,label)=>{if(date.getUTCFullYear()!==year)return;const key=keyFromDate(date);if(!soilMap.has(key))soilMap.set(key,new Set());soilMap.get(key).add(label);soilEligible.add(key)};
+ const markSoilRange=(start,length,label)=>{for(let i=0;i<length;i++)addSoilLabel(addDays(start,i),label)};
+ const start=utcDate(year-1,12,1),end=utcDate(year,12,31);
+ for(let cursor=new Date(start.getTime());cursor<=end;cursor=addDays(cursor,1)){const kanshi=getKanshi(cursor);if(kanshi==="庚午")markSoilRange(cursor,7,"大つち");if(kanshi==="戊寅")markSoilRange(cursor,7,"小つち")}
+ const termDates=getSoilTermDates(year); const doyoTerms=[{season:"winter",termDate:termDates.winter},{season:"spring",termDate:termDates.spring},{season:"summer",termDate:termDates.summer},{season:"autumn",termDate:termDates.autumn}];
+ const markDoyoRange=(season,termDate)=>{for(let i=18;i>=1;i--){const date=addDays(termDate,-i);if(date.getUTCFullYear()!==year)continue;const key=keyFromDate(date);if(!soilMap.has(key))soilMap.set(key,new Set());soilMap.get(key).add("土用");soilEligible.add(key);const branch=getEarthlyBranch(getKanshi(date));if(SOIL_SEASON_KANICHI[season].has(branch))kanichiKeys.add(key)}};
+ doyoTerms.forEach(({season,termDate})=>markDoyoRange(season,termDate)); kanichiKeys.forEach(key=>soilEligible.delete(key)); return {soilMap,soilEligible,kanichiKeys}}
+function buildCalendarData(year){const moonData=buildMoonData(year),soilData=buildSoilData(year),items=[];const start=utcDate(year,1,1),end=utcDate(year,12,31);
+ for(let cursor=new Date(start.getTime());cursor<=end;cursor=addDays(cursor,1)){const key=keyFromDate(cursor),kanshi=getKanshi(cursor),isBadKanshi=(cursor.getUTCMonth()===0&&BAD_KANSHI_JAN_ONLY.has(kanshi))||BAD_KANSHI_FORCE.has(kanshi),isMoonGood=moonData.moonGood.has(key),isMoonNear=!isMoonGood&&moonData.moonNear.has(key),isInterday=soilData.kanichiKeys.has(key),rawSoilLabels=Array.from(soilData.soilMap.get(key)||[]),isSoil=soilData.soilEligible.has(key);
+ let soilLabel=""; if(rawSoilLabels.length>0){const ordered=rawSoilLabels.sort((a,b)=>["大つち","小つち","土用"].indexOf(a)-["大つち","小つち","土用"].indexOf(b));const filtered=ordered.filter(l=>!(l==="土用"&&ordered.some(x=>x==="大つち"||x==="小つち")));soilLabel=isInterday?filtered.map(l=>`~${l}~`).join("・"):filtered.join("・")}
+ const isFullMoon=moonData.fullMoonKeys.has(key),isNewMoon=moonData.newMoonKeys.has(key),isFirstQuarter=moonData.firstQuarterKeys.has(key),isLastQuarter=moonData.lastQuarterKeys.has(key);
+ const previousNewMoon=[...moonData.newMoonDates].reverse().find(date=>date<=cursor)||moonData.newMoonDates[0],moonAge=previousNewMoon?diffDays(cursor,previousNewMoon):null,is26Night=moonAge===26;
+ let mark=""; if(isBadKanshi)mark="×"; else if(isMoonGood&&isSoil)mark="◎"; else if(isMoonGood)mark="○"; else if(isMoonNear)mark="△";
+ const month=cursor.getUTCMonth()+1,hasBamboo=month===8&&BAMBOO_KANSHI.has(kanshi),hasWood=[12,1,2].includes(month)&&mark==="×";
+ items.push({key,year:cursor.getUTCFullYear(),month,day:cursor.getUTCDate(),weekday:cursor.getUTCDay(),kanshi,isBadKanshi,isMoonGood,isMoonNear,isSoil,isInterday,soilLabel,isFullMoon,isNewMoon,isFirstQuarter,isLastQuarter,is26Night,hasBamboo,hasWood,mark})}
+ return items}
+function buildMonthGrid(year,month,items){const firstDay=utcDate(year,month,1),lastDate=utcDate(year,month+1,0).getUTCDate(),leading=firstDay.getUTCDay(),monthItems=items.filter(item=>item.month===month),cells=[];for(let i=0;i<leading;i++)cells.push(null);for(let day=1;day<=lastDate;day++)cells.push(monthItems.find(item=>item.day===day)||null);while(cells.length%7!==0)cells.push(null);return cells}
+function getCellTone(item){if(item.isBadKanshi)return"tone-bad";if(item.isMoonGood&&item.isSoil)return"tone-double";if(item.isMoonGood)return"tone-good";if(item.isMoonNear)return"tone-near";return""}
+function getMarkTone(item){if(item.isBadKanshi)return"bad";if(item.isMoonGood&&item.isSoil)return"double";if(item.isMoonGood)return"good";if(item.isMoonNear)return"near";return""}
+
+function initSelectors(){YEAR_OPTIONS.forEach(year=>{const opt=document.createElement("option");opt.value=year;opt.textContent=`${year}年`;yearSelect.appendChild(opt)});MONTH_NAMES.forEach((name,idx)=>{const opt=document.createElement("option");opt.value=String(idx+1);opt.textContent=name;monthSelect.appendChild(opt)});yearSelect.value=String(state.year);monthSelect.value=String(state.month)}
+function initWeekdays(){WEEKDAYS.forEach(weekday=>{const div=document.createElement("div");div.className="weekday";div.textContent=weekday;weekdaysEl.appendChild(div)})}
+function initLegend(){LEGEND.forEach(item=>{const row=document.createElement("div");row.className="legend-item";const mark=document.createElement("div");mark.className=`legend-mark ${item.key}`;mark.textContent=item.label;const text=document.createElement("div");text.className="legend-text";text.textContent=item.description;row.appendChild(mark);row.appendChild(text);legendEl.appendChild(row)})}
+function syncSelectors(){yearSelect.value=String(state.year);monthSelect.value=String(state.month)}
+function prevMonth(){state.month-=1;if(state.month<1){state.month=12;state.year-=1}syncSelectors();render()}
+function nextMonth(){state.month+=1;if(state.month>12){state.month=1;state.year+=1}syncSelectors();render()}
+async function ensureYearData(year){if(!state.cache.has(year))state.cache.set(year,buildCalendarData(year));return state.cache.get(year)}
+async function render(){statusText.textContent=`${state.year}年 ${state.month}月`;const items=await ensureYearData(state.year);const todayKey=keyFromDate(startOfUtcDay(new Date()));const cells=buildMonthGrid(state.year,state.month,items);calendarGrid.innerHTML="";
+ cells.forEach(item=>{const cell=document.createElement("div");cell.className=`cell ${item?getCellTone(item):"empty"} ${item&&item.key===todayKey?"today":""}`;if(!item){calendarGrid.appendChild(cell);return}
+ const top=document.createElement("div");top.className="cell-top";const date=document.createElement("div");date.className="date";date.textContent=item.day;top.appendChild(date);
+ const badges=document.createElement("div");badges.className="badges";if(item.hasWood){const s=document.createElement("span");s.className="top-only-icon";s.textContent="🌳";s.style.fontSize="12px";badges.appendChild(s)} if(item.hasBamboo){const s=document.createElement("span");s.className="top-only-icon";s.textContent="🎋";s.style.fontSize="12px";badges.appendChild(s)} if(item.mark){const m=document.createElement("div");m.className=`mark ${getMarkTone(item)}`;m.textContent=item.mark;badges.appendChild(m)} top.appendChild(badges);
+ const details=document.createElement("div");details.className="details";const kanshi=document.createElement("div");kanshi.className="kanshi";kanshi.textContent=item.kanshi;details.appendChild(kanshi);const detailIcons=document.createElement("div");detailIcons.className="detail-icons";if(item.hasWood){const s=document.createElement("span");s.textContent="🌳";detailIcons.appendChild(s)} if(item.hasBamboo){const s=document.createElement("span");s.textContent="🎋";detailIcons.appendChild(s)} if(detailIcons.childNodes.length){details.appendChild(detailIcons)}
+ if(item.soilLabel){const soil=document.createElement("div");soil.className="soil";const parts=item.soilLabel.split("・");parts.forEach((part,index)=>{const span=document.createElement("span");const strike=part.includes("~");span.textContent=part.replaceAll("~","");if(strike)span.style.textDecoration="line-through";soil.appendChild(span);if(index<parts.length-1)soil.append("・")});details.appendChild(soil)}
+ [["isFullMoon","🌕 満月"],["isNewMoon","🌑 新月"],["isFirstQuarter","🌓 上弦"],["isLastQuarter","🌗 下弦"],["is26Night","🌘 二十六夜"]].forEach(([k,t])=>{if(item[k]){const d=document.createElement("div");d.className="moon";d.textContent=t;details.appendChild(d)}})
+ cell.appendChild(top);cell.appendChild(details);calendarGrid.appendChild(cell)})}
+yearSelect.addEventListener("change",()=>{state.year=Number(yearSelect.value);render()});
+monthSelect.addEventListener("change",()=>{state.month=Number(monthSelect.value);render()});
+prevBtn.addEventListener("click",prevMonth); nextBtn.addEventListener("click",nextMonth);
+calendarGrid.addEventListener("touchstart",e=>{state.touchStartX=e.touches[0]?.clientX??null},{passive:true});
+calendarGrid.addEventListener("touchend",e=>{const startX=state.touchStartX,endX=e.changedTouches[0]?.clientX??null;state.touchStartX=null;if(startX==null||endX==null)return;const diff=endX-startX;if(Math.abs(diff)<40)return;if(diff<0)nextMonth();else prevMonth()},{passive:true});
+initSelectors(); initWeekdays(); initLegend(); statusText.textContent="読み込み中…"; render().catch(err=>{console.error(err);statusText.textContent="読み込みエラーが発生しました"});
+  </script>
+</body>
+</html>
